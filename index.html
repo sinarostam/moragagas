@@ -458,13 +458,16 @@
   .contact .arrow{width:18px;height:18px;opacity:.5}
   .map{
     position:relative;border-radius:calc(var(--radius) + 6px);overflow:hidden;min-height:480px;
-    background:var(--auto-night);color:#fff;display:flex;flex-direction:column;justify-content:flex-end;
+    background:var(--gas-cream);border:1px solid rgba(26,20,16,.1);color:var(--gas-ink);display:flex;flex-direction:column;
   }
-  .map-art{position:absolute;inset:0;width:100%;height:100%}
+  .map-view{position:relative;flex:1;min-height:380px;background:#E9E2D4}
+  .map-frame{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .map-loading{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--auto-muted)}
+  .map-card{pointer-events:auto}
   .map-card{
     position:relative;margin:clamp(18px,2.5vw,28px);padding:clamp(22px,2.6vw,30px);
     background:rgba(255,251,243,.97);color:var(--gas-ink);border-radius:18px;
-    box-shadow:0 24px 60px -20px rgba(0,0,0,.6);
+    box-shadow:0 10px 30px -18px rgba(26,20,16,.4);
     display:grid;grid-template-columns:1fr auto;gap:18px 24px;align-items:center;
   }
   .map-card .eyebrow{color:var(--gas-red);font-size:11.5px;margin-bottom:6px}
@@ -477,10 +480,6 @@
   }
   .map-btn:hover{transform:translateY(-2px)}
   .map-btn svg{width:16px;height:16px}
-  .map-pin{position:absolute;left:54%;top:36%;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center}
-  .map-pin .logo-gas{width:74px;filter:drop-shadow(0 10px 18px rgba(0,0,0,.45))}
-  .map-pin i{width:2px;height:26px;background:#fff}
-  .map-pin b{width:16px;height:16px;border-radius:50%;background:var(--gas-amber);border:3px solid #fff;margin-top:-2px;box-shadow:0 0 0 10px rgba(244,164,28,.25),0 0 0 22px rgba(244,164,28,.12)}
   @media (max-width:560px){.map-card{grid-template-columns:1fr}.map-btn{justify-content:center}}
   @media (max-width:900px){.visit-grid{grid-template-columns:1fr}}
 
@@ -747,25 +746,9 @@
       </div>
     </div>
     <div class="map reveal">
-      <svg class="map-art" viewBox="0 0 600 520" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-        <defs>
-          <pattern id="blocks" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(-18)">
-            <rect width="60" height="60" fill="#0E1C2C"/>
-            <rect x="6" y="6" width="48" height="48" rx="6" fill="#132638"/>
-          </pattern>
-        </defs>
-        <rect width="600" height="520" fill="url(#blocks)"/>
-        <path d="M-40 470 C 140 400, 260 330, 330 190 S 470 -10, 640 -40" stroke="#0A1420" stroke-width="46" fill="none"/>
-        <path d="M-40 470 C 140 400, 260 330, 330 190 S 470 -10, 640 -40" stroke="#F4A41C" stroke-width="30" fill="none" opacity=".9"/>
-        <path d="M-40 470 C 140 400, 260 330, 330 190 S 470 -10, 640 -40" stroke="#1A1410" stroke-width="2" stroke-dasharray="14 12" fill="none" opacity=".35"/>
-        <text font-family="JetBrains Mono, monospace" font-size="14" font-weight="700" letter-spacing="4" fill="#1A1410">
-          <textPath href="#rd" startOffset="66%">MORAGA RD</textPath>
-        </text>
-        <path id="rd" d="M-40 475 C 140 405, 260 335, 330 195 S 470 -5, 640 -35" fill="none"/>
-        <circle cx="324" cy="186" r="150" fill="none" stroke="rgba(76,155,255,.18)" stroke-width="1.5" stroke-dasharray="4 8"/>
-      </svg>
-      <div class="map-pin" aria-hidden="true">
-        <span class="logo-gas"></span><i></i><b></b>
+      <div class="map-view">
+        <div class="map-loading" aria-hidden="true">Loading map…</div>
+        <iframe class="map-frame" id="mapFrame" title="Google Map of 1410 Moraga Rd, Moraga, CA 94556" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
       </div>
       <div class="map-card">
         <div>
@@ -903,6 +886,7 @@ $("#callAuto").href = tel(SITE.auto.phone);
 $("#footCallAuto").href = tel(SITE.auto.phone);
 $("#directions").href = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(SITE.address);
 $("#mapBtn").href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(SITE.address);
+$("#mapFrame").src = "https://www.google.com/maps?q=" + encodeURIComponent(SITE.address) + "&z=16&output=embed";
 $("#yr").textContent = new Date().getFullYear();
 
 /* ---------- live status ---------- */
