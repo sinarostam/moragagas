@@ -362,6 +362,12 @@
     font-family:var(--display);font-weight:900;font-size:140px;line-height:1;color:var(--auto-blue);opacity:.22;
   }
   .review blockquote{font-size:17px;line-height:1.7;color:var(--auto-ice);position:relative}
+  .review:not(:only-child) blockquote{margin-top:44px}
+  @media (min-width:641px) and (max-width:1020px){
+    .reviews{grid-template-columns:repeat(2,1fr)}
+    .review:not(:only-child):last-child:nth-child(odd){grid-column:1/-1}
+  }
+  @media (max-width:640px){.reviews{grid-template-columns:1fr}}
   .review figcaption{display:flex;align-items:center;gap:14px;margin-top:auto;padding-top:28px}
   .review .avatar{
     width:46px;height:46px;border-radius:50%;flex:none;display:grid;place-items:center;
@@ -842,6 +848,8 @@ const SITE = {
         text:"I had a check engine light on my Honda for the longest time and no Honda dealer could fix it. Brought it to nick and he immediately knew what the problem was and was able to fix it. Since then, I've been bringing my cars to him for service even though he's 30 minutes away." },
       { name:"Mark M.", detail:"Customer for 20+ years",
         text:"Nick the owner always has a smile on his mug! Very amicable, very fair with his prices. He's been working on my Sons cars and mine for over 20 Years. Highly recommend Nick!" },
+      { name:"Leon L.", detail:"Customer for 10+ years",
+        text:"Brought in my car for a full suspension refresh and some brake work. I don't trust many mechanics especially mechanics in the bay area that have to overcharge to meet the high overhead rents. I've been going to Nick for more than a decade and have brought all my cars to him and he's always been very honest and fair with his labor costs. If you want an honest shop and good mechanics that know what they are doing go to Nick's!" },
     ],
   },
 };
