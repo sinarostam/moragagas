@@ -927,6 +927,13 @@ $("#bookForm").addEventListener("submit", async e=>{
     _honey: ""
   };
 
+  // FormSubmit refuses submissions from pages opened as a local file
+  if (location.protocol === "file:"){
+    c.innerHTML = `<strong>The booking form works only once the site is online.</strong> This page was opened as a file on a computer, so the request can't be sent. Open it from its web address (Netlify, Vercel or GitHub Pages) and try again, or call <a href="${tel(SITE.auto.phone)}">${SITE.auto.phone}</a>.`;
+    c.classList.add("show","error");
+    return;
+  }
+
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Sending…';
   c.className = "confirm";
@@ -938,13 +945,25 @@ $("#bookForm").addEventListener("submit", async e=>{
       body: JSON.stringify(payload)
     });
     const out = await res.json().catch(()=>({}));
-    if (!res.ok || String(out.success) === "false") throw new Error(out.message || "Request failed");
-    c.innerHTML = `<strong>Request sent. Thanks, ${esc(data.name.trim().split(" ")[0])}!</strong> We received your request for <b>${esc(data.service)}</b> on <b>${esc(when)}</b> and will call <b>${esc(data.phone.trim())}</b> to confirm a time.`;
-    c.classList.add("show");
-    f.reset();
-    const t=new Date(); t.setDate(t.getDate()+1); f.elements.date.value=t.toISOString().slice(0,10);
+    const msg = String(out.message || "");
+    if (res.ok && String(out.success) === "true"){
+      c.innerHTML = `<strong>Request sent. Thanks, ${esc(data.name.trim().split(" ")[0])}!</strong> We received your request for <b>${esc(data.service)}</b> on <b>${esc(when)}</b> and will call <b>${esc(data.phone.trim())}</b> to confirm a time.`;
+      c.classList.add("show");
+      f.reset();
+      const t=new Date(); t.setDate(t.getDate()+1); f.elements.date.value=t.toISOString().slice(0,10);
+      return;
+    }
+    console.error("FormSubmit response:", res.status, out);
+    if (/activat/i.test(msg)){
+      // One-time setup: FormSubmit has emailed the owner an "Activate Form" link
+      c.innerHTML = `<strong>The booking form is almost ready.</strong> It needs a one-time activation: FormSubmit has sent an email to <b>${esc(SITE.bookingEmail)}</b> (check the spam folder too). Click <b>Activate Form</b> in that email, then send this request again. Meanwhile you can call <a href="${tel(SITE.auto.phone)}">${SITE.auto.phone}</a>.`;
+      c.classList.add("show","error");
+      return;
+    }
+    throw new Error(msg || ("HTTP " + res.status));
   }catch(err){
-    c.innerHTML = `<strong>Sorry, your request didn't go through.</strong> Please try again in a moment, or call Nick's Auto Service at <a href="${tel(SITE.auto.phone)}">${SITE.auto.phone}</a>.`;
+    console.error("Booking request failed:", err);
+    c.innerHTML = `<strong>Sorry, your request didn't go through.</strong> Please try again in a moment, or call Nick's Auto Service at <a href="${tel(SITE.auto.phone)}">${SITE.auto.phone}</a>.<br><small style="opacity:.7">Details: ${esc(err.message || "network error")}</small>`;
     c.classList.add("show","error");
   }finally{
     btn.disabled = false;
